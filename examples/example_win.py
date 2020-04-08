@@ -1,5 +1,6 @@
 from tapsdk import TapSDK, TapInputMode
 from tapsdk.models import AirGestures
+from time import sleep
 
 tap_instance = []
 tap_identifiers = []
@@ -55,8 +56,13 @@ def on_air_gesture_state_event(identifier: str, air_gesture_state: bool):
 
 
 def on_raw_sensor_data(identifier, raw_sensor_data):
-    # print(raw_sensor_data)
-    if raw_sensor_data.GetPoint(1).z > 2000 and raw_sensor_data.GetPoint(2).z > 2000 and raw_sensor_data.GetPoint(3).z > 2000 and raw_sensor_data.GetPoint(4).z > 2000:
+    print(raw_sensor_data)
+    if (
+        raw_sensor_data.GetPoint(1).z > 2000
+        and raw_sensor_data.GetPoint(2).z > 2000
+        and raw_sensor_data.GetPoint(3).z > 2000
+        and raw_sensor_data.GetPoint(4).z > 2000
+    ):
         tap_instance.set_input_mode(TapInputMode("controller"), identifier)
 
 
@@ -72,6 +78,10 @@ def main():
     tap_instance.register_air_gesture_events(on_air_gesture_event)
     tap_instance.register_air_gesture_state_events(on_air_gesture_state_event)
     tap_instance.set_input_mode(TapInputMode("controller"))
+    # tap_instance.set_input_mode(TapInputMode("raw", sensitivity=[2,1,4]))
+    # tap_instance.set_input_mode(TapInputMode("text"))
+    # tap_instance.set_default_input_mode(TapInputMode("raw", sensitivity=[2,1,4]))
+    # sleep(3.0)
 
     while True:
         pass
