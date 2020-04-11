@@ -1,6 +1,24 @@
 from tapsdk import TapSDK, TapInputMode
 from tapsdk.models import AirGestures
 from time import sleep
+from enum import IntEnum
+
+
+class SensorIndex(IntEnum):
+    indexof_IMU_GYRO = 0
+    indexof_IMU_ACCELEROMETER = 1
+    indexof_DEV_THUMB = 0
+    indexof_DEV_INDEX = 1
+    indexof_DEV_MIDDLE = 2
+    indexof_DEV_RING = 3
+    indexof_DEV_PINKY = 4
+
+
+class SensorType(IntEnum):
+    _ = 0
+    IMU = 1
+    Device = 2
+
 
 tap_instance = []
 tap_identifiers = []
@@ -40,6 +58,7 @@ def on_tap_event(identifier, tapcode):
 
 def on_air_gesture_event(identifier, air_gesture):
     print(" Air gesture: " + AirGestures(air_gesture).name)
+    return
     if air_gesture == AirGestures.UP_ONE_FINGER.value:
         tap_instance.set_input_mode(TapInputMode("raw"), identifier)
     if air_gesture == AirGestures.DOWN_ONE_FINGER.value:
@@ -55,15 +74,23 @@ def on_air_gesture_state_event(identifier: str, air_gesture_state: bool):
         print("Left air mouse mode")
 
 
+i = 0
+
+
 def on_raw_sensor_data(identifier, raw_sensor_data):
-    print(raw_sensor_data)
-    if (
-        raw_sensor_data.GetPoint(1).z > 2000
-        and raw_sensor_data.GetPoint(2).z > 2000
-        and raw_sensor_data.GetPoint(3).z > 2000
-        and raw_sensor_data.GetPoint(4).z > 2000
-    ):
-        tap_instance.set_input_mode(TapInputMode("controller"), identifier)
+    # print(raw_sensor_data)
+    global i
+    i += 1
+    # if i % 10 == 0 and raw_sensor_data.type == SensorType.IMU:
+    if raw_sensor_data.type == SensorType.IMU:
+        print(raw_sensor_data.GetPoint(SensorIndex.indexof_IMU_ACCELEROMETER))
+    # if (
+    #     raw_sensor_data.GetPoint(1).z > 2000
+    #     and raw_sensor_data.GetPoint(2).z > 2000
+    #     and raw_sensor_data.GetPoint(3).z > 2000
+    #     and raw_sensor_data.GetPoint(4).z > 2000
+    # ):
+    #     tap_instance.set_input_mode(TapInputMode("controller"), identifier)
 
 
 def main():
