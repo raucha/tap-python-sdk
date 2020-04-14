@@ -10,10 +10,12 @@ import asyncio
 import platform
 import logging
 from bleak import _logger as logger
+import logging
 
 import time
 
 
+logger.setLevel(logging.WARN)
 
 
 def notification_handler(sender, data):
@@ -45,23 +47,19 @@ def OnMoused(identifier, vx, vy, isMouse):
     print(identifier + " mouse movement: %d, %d, %d" %(vx, vy, isMouse))
 
 
-def OnRawData(*packets, **kwargs):
-# def OnRawData(idaentifier, packets):
-    # print("kwargs")
-    # print(kwargs)
-    # print("packets")
-    # print(packets)
+def OnRawData(identifier, *packets):
     identifier = ""
-    imu_msg = dict([m for m in packets[1:] if m.get("type") == "imu"][0])
+    imu_msg = dict([m for m in packets if m.get("type") == "imu"][0])
     if len(imu_msg) > 0:
         OnRawData.cnt += 1
         if OnRawData.cnt == 10:
             OnRawData.cnt = 0
             logger.info(identifier + " raw imu : " + str(imu_msg["ts"]))
 
-    for m in packets[1:]:
+    for m in packets:
         if m.get("type") == "imu":
             # print("imu")
+            print("imu, " + "{:.3f}".format(time.time()) + ", " + str(list(map(lambda x: "{:7d}".format(x), m.get("payload")))))
             OnRawData.imu_cnt += 1
             if OnRawData.imu_cnt == 208:
                 OnRawData.imu_cnt = 0
@@ -71,7 +69,7 @@ def OnRawData(*packets, **kwargs):
             OnRawData.accl_cnt += 1
             if OnRawData.accl_cnt == 200:
                 OnRawData.accl_cnt = 0
-                print("accl, " + str(time.time()) + ", " + str(m.get("payload")))
+                # print("accl, " + str(time.time()) + ", " + str(m.get("payload")))
 
 OnRawData.imu_cnt = 0
 OnRawData.accl_cnt = 0
@@ -90,7 +88,7 @@ async def run(loop, debug=False):
         l.addHandler(h)
         logger.addHandler(h)
 
-    client = TapSDK(loop)
+    client = TapSDK(address="D7:6D:0F:56:6A:F0", loop=loop)
     # devices = await client.list_connected_taps()
     x = await client.manager.connect_retrieved()
     x = await client.manager.is_connected()
@@ -106,11 +104,11 @@ async def run(loop, debug=False):
 
     await asyncio.sleep(3)
     await client.set_input_mode(TapInputMode("raw", sensitivity=[0,0,0]))
-    # await asyncio.sleep(3)
-    # await client.set_input_mode(TapInputMode("text"))
-    # await asyncio.sleep(3)
-    # await client.set_input_mode(TapInputMode("raw", sensitivity=[2,2,2]))
-    # await client.send_vibration_sequence([100, 200, 300, 400, 500])
+    await asyncio.sleep(3)
+    await client.set_input_mode(TapInputMode("text"))
+    await asyncio.sleep(3)
+    await client.set_input_mode(TapInputMode("raw", sensitivity=[2,2,2]))
+    await client.send_vibration_sequence([100, 200, 300, 400, 500])
 
     await asyncio.sleep(50.0, loop=loop)
 

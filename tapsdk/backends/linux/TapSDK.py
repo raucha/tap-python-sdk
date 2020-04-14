@@ -20,6 +20,8 @@ class TapClient(BleakClient):
         super().__init__(address, loop=loop, **kwargs)
 
     async def connect_retrieved(self, **kwargs) -> bool:
+        ####@TODO: Auto connect is not supported now.
+        #### discover() dont show aleady paired devices so use fixed MAC address for connect.
         # paired_taps = get_paired_taps()
         ## devices = await discover(filters={"UUIDs":[TapUUID.tap_service]})
         ## devices = list(filter(lambda x: not x.details["props"]["Paired"], devices))
@@ -27,12 +29,9 @@ class TapClient(BleakClient):
         ## paired_taps = devices
         ## self.address = paired_taps[0].details["props"]["Address"]
 
-        self.address = "D7:6D:0F:56:6A:F0" #!@TODO
-
         logger.debug("Connecting to Tap device @ {}".format(self.address))
 
         await self.connect()
-        # print("connect() status:{} ".format(await self.connect()))
 
         # Now get services
         await self.get_services()
@@ -47,11 +46,11 @@ class TapClient(BleakClient):
 #     logger.debug("Found connected Taps @ {}".format(paired_taps))
 #     return paired_taps
 
-class TapMacSDK(TapSDKBase):
-    def __init__(self, loop: AbstractEventLoop = None):
-        super(TapMacSDK, self).__init__()
+class TapLinuxSDK(TapSDKBase):
+    def __init__(self, loop: AbstractEventLoop = None, address=""):
+        super(TapLinuxSDK, self).__init__()
         self.loop = loop
-        self.manager = TapClient(loop=loop)
+        self.manager = TapClient(loop=loop, address=address)
         self.mouse_event_cb = None
         self.tap_event_cb = None
         self.air_gesture_event_cb = None
