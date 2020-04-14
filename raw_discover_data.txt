@@ -1,0 +1,17 @@
+00:1F:FF:02:44:29: DeepSleepHeadband
+D7:6D:0F:56:6A:F0: Tap_D689210
+57:21:28:57:BA:BC: 57-21-28-57-BA-BC
+4F:16:ED:51:85:49: 4F-16-ED-51-85-49
+6A:74:2A:B2:43:9E: 6A-74-2A-B2-43-9E
+45:E9:10:12:B6:DE: 45-E9-10-12-B6-DE
+49:76:B0:96:44:04: dev_49_76_B0_96_44_04
+79:52:AB:00:D9:45: 79-52-AB-00-D9-45
+6B:4F:95:D5:46:60: 6B-4F-95-D5-46-60
+2C:26:17:49:AD:47: 2C-26-17-49-AD-47
+2C:41:A1:0C:F7:D4: Bose Color II SoundLink
+>>> dev[1]
+<bleak.backends.device.BLEDevice object at 0x7fdca4ebfa10>
+>>> str(dev[1])
+'D7:6D:0F:56:6A:F0: Tap_D689210'
+>>> dev[1].details
+{'path': '/org/bluez/hci0/dev_D7_6D_0F_56_6A_F0', 'props': {'Address': 'D7:6D:0F:56:6A:F0', 'AddressType': 'random', 'Name': 'Tap_D689210', 'Alias': 'Tap_D689210', 'Appearance': 961, 'Icon': 'input-keyboard', 'Paired': False, 'Trusted': False, 'Blocked': False, 'LegacyPairing': False, 'Connected': False, 'UUIDs': ['00001812-0000-1000-8000-00805f9b34fb', 'c3ff0001-1d8b-40fd-a56f-c7bd5d0f3370'], 'Adapter': '/org/bluez/hci0', 'ServicesResolved': False, 'RSSI': -44, 'TxPower': 0}}
